@@ -204,6 +204,22 @@ button:hover {
   }
 }
 
+.edit-button {
+  margin-top: 12px;
+  margin-right: 10px;
+  background: #f59e0b;
+}
+
+.edit-button:hover {
+  background: #d97706;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
 @media (max-width: 600px) {
   .app-container {
     padding: 16px;

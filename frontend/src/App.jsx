@@ -5,6 +5,8 @@ import "./App.css";
 function App() {
   const [incidents, setIncidents] = useState([]);
 
+  const [editingId, setEditingId] = useState(null);
+
   const [formData, setFormData] = useState({
     equipment: "",
     title: "",
@@ -39,8 +41,23 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await api.post("/incidents", formData);
-      setIncidents([response.data, ...incidents]);
+      let response;
+
+      if (editingId) {
+        response = await api.put(`/incidents/${editingId}`, formData);
+
+        setIncidents(
+          incidents.map((incident) =>
+            incident.id === editingId ? response.data : incident,
+          ),
+        );
+
+        setEditingId(null);
+      } else {
+        response = await api.post("/incidents", formData);
+
+        setIncidents([response.data, ...incidents]);
+      }
 
       setFormData({
         equipment: "",
@@ -81,6 +98,18 @@ function App() {
     } catch (error) {
       console.error("Erro ao excluir incidente:", error);
     }
+  }
+
+  function handleEdit(incident) {
+    setEditingId(incident.id);
+
+    setFormData({
+      equipment: incident.equipment,
+      title: incident.title,
+      description: incident.description,
+      status: incident.status,
+      priority: incident.priority,
+    });
   }
 
   return (
@@ -197,6 +226,14 @@ function App() {
                   </div>
 
                   <p>{incident.description}</p>
+
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEdit(incident)}
+                  >
+                    Editar
+                  </button>
+
                   <button
                     className="delete-button"
                     onClick={() => handleDelete(incident.id)}
