@@ -6,6 +6,7 @@ function App() {
   const [incidents, setIncidents] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [filter, setFilter] = useState("Todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [formData, setFormData] = useState({
     equipment: "",
@@ -113,15 +114,16 @@ function App() {
   }
 
   const filteredIncidents = incidents.filter((incident) => {
-    if (filter === "Todos") {
-      return true;
-    }
+    const matchesFilter =
+      filter === "Todos" ||
+      (filter === "Críticos" && incident.priority === "Crítica") ||
+      incident.status === filter;
 
-    if (filter === "Críticos") {
-      return incident.priority === "Crítica";
-    }
+    const matchesSearch =
+      incident.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incident.title.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return incident.status === filter;
+    return matchesFilter && matchesSearch;
   });
 
   return (
@@ -157,7 +159,7 @@ function App() {
 
       <main className="content-grid">
         <section className="card">
-          <h2>Novo Incidente</h2>
+          <h2>{editingId ? "Editar Incidente" : "Novo Incidente"}</h2>
 
           <form onSubmit={handleSubmit} className="form-grid">
             <input
@@ -207,12 +209,23 @@ function App() {
               <option value="Crítica">Crítica</option>
             </select>
 
-            <button type="submit">Cadastrar Incidente</button>
+            <button type="submit">
+              {editingId ? "Salvar Alterações" : "Cadastrar Incidente"}
+            </button>
+
           </form>
         </section>
 
         <section className="card">
           <h2>Incidentes</h2>
+
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Pesquisar por equipamento ou título..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
 
           <div className="filter-container">
             <button

@@ -259,6 +259,10 @@ button:hover {
   margin: 0;
 }
 
+.search-input {
+  margin-bottom: 16px;
+}
+
 @media (max-width: 600px) {
   .app-container {
     padding: 16px;
