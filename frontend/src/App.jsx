@@ -4,8 +4,8 @@ import "./App.css";
 
 function App() {
   const [incidents, setIncidents] = useState([]);
-
   const [editingId, setEditingId] = useState(null);
+  const [filter, setFilter] = useState("Todos");
 
   const [formData, setFormData] = useState({
     equipment: "",
@@ -112,6 +112,18 @@ function App() {
     });
   }
 
+  const filteredIncidents = incidents.filter((incident) => {
+    if (filter === "Todos") {
+      return true;
+    }
+
+    if (filter === "Críticos") {
+      return incident.priority === "Crítica";
+    }
+
+    return incident.status === filter;
+  });
+
   return (
     <div className="app-container">
       <header className="header">
@@ -202,11 +214,44 @@ function App() {
         <section className="card">
           <h2>Incidentes</h2>
 
+          <div className="filter-container">
+            <button
+              className={filter === "Todos" ? "active-filter" : ""}
+              onClick={() => setFilter("Todos")}
+            >
+              Todos
+            </button>
+
+            <button
+              className={filter === "Aberto" ? "active-filter" : ""}
+              onClick={() => setFilter("Aberto")}
+            >
+              Abertos
+            </button>
+
+            <button
+              className={filter === "Resolvido" ? "active-filter" : ""}
+              onClick={() => setFilter("Resolvido")}
+            >
+              Resolvidos
+            </button>
+
+            <button
+              className={filter === "Críticos" ? "active-filter" : ""}
+              onClick={() => setFilter("Críticos")}
+            >
+              Críticos
+            </button>
+          </div>
+
           <div className="incident-list">
-            {incidents.length === 0 ? (
-              <p>Nenhum incidente encontrado.</p>
+            {filteredIncidents.length === 0 ? (
+              <div className="empty-state">
+                <h3>Nenhum incidente encontrado</h3>
+                <p>Não existem incidentes para o filtro selecionado.</p>
+              </div>
             ) : (
-              incidents.map((incident) => (
+              filteredIncidents.map((incident) => (
                 <article key={incident.id} className="incident-card">
                   <div className="incident-header">
                     <h3>{incident.title}</h3>

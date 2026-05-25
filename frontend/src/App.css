@@ -220,6 +220,45 @@ button:hover {
   margin-top: 14px;
 }
 
+.filter-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.filter-container button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.filter-container button:hover {
+  background: #d1d5db;
+}
+
+.active-filter {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  color: #334155;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
 @media (max-width: 600px) {
   .app-container {
     padding: 16px;
