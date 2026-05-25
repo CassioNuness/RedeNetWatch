@@ -55,9 +55,33 @@ function App() {
   }
 
   const totalIncidents = incidents.length;
-  const openIncidents = incidents.filter((item) => item.status === "Aberto").length;
-  const criticalIncidents = incidents.filter((item) => item.priority === "Crítica").length;
-  const resolvedIncidents = incidents.filter((item) => item.status === "Resolvido").length;
+  const openIncidents = incidents.filter(
+    (item) => item.status === "Aberto",
+  ).length;
+  const criticalIncidents = incidents.filter(
+    (item) => item.priority === "Crítica",
+  ).length;
+  const resolvedIncidents = incidents.filter(
+    (item) => item.status === "Resolvido",
+  ).length;
+
+  async function handleDelete(id) {
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este incidente?",
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await api.delete(`/incidents/${id}`);
+
+      setIncidents(incidents.filter((incident) => incident.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir incidente:", error);
+    }
+  }
 
   return (
     <div className="app-container">
@@ -121,13 +145,21 @@ function App() {
               required
             />
 
-            <select name="status" value={formData.status} onChange={handleChange}>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+            >
               <option value="Aberto">Aberto</option>
               <option value="Em análise">Em análise</option>
               <option value="Resolvido">Resolvido</option>
             </select>
 
-            <select name="priority" value={formData.priority} onChange={handleChange}>
+            <select
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+            >
               <option value="Baixa">Baixa</option>
               <option value="Média">Média</option>
               <option value="Alta">Alta</option>
@@ -149,7 +181,9 @@ function App() {
                 <article key={incident.id} className="incident-card">
                   <div className="incident-header">
                     <h3>{incident.title}</h3>
-                    <span className={`status status-${incident.status.replace(" ", "-")}`}>
+                    <span
+                      className={`status status-${incident.status.replace(" ", "-")}`}
+                    >
                       {incident.status}
                     </span>
                   </div>
@@ -163,6 +197,12 @@ function App() {
                   </div>
 
                   <p>{incident.description}</p>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(incident.id)}
+                  >
+                    Excluir
+                  </button>
                 </article>
               ))
             )}

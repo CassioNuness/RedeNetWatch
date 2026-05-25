@@ -185,6 +185,15 @@ button:hover {
   color: #166534;
 }
 
+.delete-button {
+  margin-top: 12px;
+  background: #dc2626;
+}
+
+.delete-button:hover {
+  background: #b91c1c;
+}
+
 @media (max-width: 900px) {
   .dashboard {
     grid-template-columns: repeat(2, 1fr);
