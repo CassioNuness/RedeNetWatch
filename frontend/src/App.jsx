@@ -7,6 +7,8 @@ function App() {
   const [editingId, setEditingId] = useState(null);
   const [filter, setFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [incidentToDelete, setIncidentToDelete] = useState(null);
 
   const [formData, setFormData] = useState({
     equipment: "",
@@ -83,19 +85,25 @@ function App() {
     (item) => item.status === "Resolvido",
   ).length;
 
-  async function handleDelete(id) {
-    const confirmDelete = window.confirm(
-      "Tem certeza que deseja excluir este incidente?",
-    );
+  function openDeleteModal(incident) {
+    setIncidentToDelete(incident);
+    setDeleteModalOpen(true);
+  }
 
-    if (!confirmDelete) {
-      return;
-    }
+  function closeDeleteModal() {
+    setIncidentToDelete(null);
+    setDeleteModalOpen(false);
+  }
 
+  async function confirmDelete() {
     try {
-      await api.delete(`/incidents/${id}`);
+      await api.delete(`/incidents/${incidentToDelete.id}`);
 
-      setIncidents(incidents.filter((incident) => incident.id !== id));
+      setIncidents(
+        incidents.filter((incident) => incident.id !== incidentToDelete.id),
+      );
+
+      closeDeleteModal();
     } catch (error) {
       console.error("Erro ao excluir incidente:", error);
     }
@@ -212,7 +220,6 @@ function App() {
             <button type="submit">
               {editingId ? "Salvar Alterações" : "Cadastrar Incidente"}
             </button>
-
           </form>
         </section>
 
@@ -294,7 +301,7 @@ function App() {
 
                   <button
                     className="delete-button"
-                    onClick={() => handleDelete(incident.id)}
+                    onClick={() => openDeleteModal(incident)}
                   >
                     Excluir
                   </button>
@@ -304,6 +311,37 @@ function App() {
           </div>
         </section>
       </main>
+
+      {deleteModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Excluir incidente</h3>
+
+            <p>
+              Tem certeza que deseja excluir o incidente{" "}
+              <strong>{incidentToDelete?.title}</strong>?
+            </p>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={closeDeleteModal}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                className="delete-button"
+                onClick={confirmDelete}
+              >
+                Confirmar exclusão
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
